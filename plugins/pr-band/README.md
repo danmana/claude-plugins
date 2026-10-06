@@ -7,6 +7,7 @@ Claude Code's own footer shows one PR per session. `pr-band` shows all of them.
 <!-- Screenshots: full view, compact view, hover -->
 
 ```
+PRs
 ● app #12   open   review required   ✓4      Add search
 ● web !3    draft                     …1 ✓2   Tidy styles
 + 1 merged/closed   ▴ compact
@@ -15,7 +16,7 @@ Claude Code's own footer shows one PR per session. `pr-band` shows all of them.
 Compact view, one line, each number a link colored by its state:
 
 ```
-#12 !3 +1 merged/closed ▾ details
+PRs #12 !3 +1 merged/closed ▾ details
 ```
 
 Hover a number to see its repo, state, review, checks and title.
