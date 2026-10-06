@@ -92,6 +92,12 @@ test('PRs from Bash calls show with their status; merged ones fold away', async 
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await $.ui.mount({ ...BAND, surface } as never)
     expect(await ui.find({ type: 'Text', text: 'PRs' })).toBeDefined()
+    expect(await ui.find({ type: 'Link', text: '#12' })).toBeDefined()
+    expect(await ui.find({ type: 'Link', text: '!3' })).toBeDefined()
+    expect(await ui.find({ type: 'Text', text: '+1 merged/closed' })).toBeDefined()
+
+    await ui.press({ key: 'expand' })
+    expect(await ui.find({ type: 'Text', text: 'PRs' })).toBeDefined()
     expect(await ui.find({ type: 'Link', text: 'app #12' })).toBeDefined()
     expect(await ui.find({ type: 'Text', text: 'review required' })).toBeDefined()
     expect(await ui.find({ type: 'Link', text: 'web !3' })).toBeDefined()
@@ -103,17 +109,12 @@ test('PRs from Bash calls show with their status; merged ones fold away', async 
     await ui.press({ key: 'toggle-closed' })
 
     await ui.press({ key: 'compact' })
-    expect(await ui.find({ type: 'Text', text: 'PRs' })).toBeDefined()
-    expect(await ui.find({ type: 'Link', text: '#12' })).toBeDefined()
-    expect(await ui.find({ type: 'Link', text: '!3' })).toBeDefined()
-    expect(await ui.find({ type: 'Text', text: '+1 merged/closed' })).toBeDefined()
-    await ui.press({ key: 'expand' })
     await ui.unmount()
   }
 })
 
 test('without gh or glab the PRs still show, as plain links', async ($, on) => {
-  const clock = standIn(on)
+  const clock = standIn(on, { isCompact: false })
   on('session.messages', () => ({ value: [] }))
   on('tool.call', () => ({ result: { stdout: `${OPEN}\n${MR}\n`, stderr: '', interrupted: false }, text: `${OPEN}\n${MR}\n` }))
   on('process.run', () => {
@@ -131,7 +132,7 @@ test('without gh or glab the PRs still show, as plain links', async ($, on) => {
 })
 
 test('PRs from before the plugin loaded are picked up from the conversation', async ($, on) => {
-  const clock = standIn(on)
+  const clock = standIn(on, { isCompact: false })
   const history: SessionMessage[] = [
     { role: 'assistant', text: '', toolUses: [{ tool_use_id: 'a', tool: 'Bash', input: { command: 'gh pr create --fill' }, text: `${OPEN}\n` }] },
     { role: 'assistant', text: '', toolUses: [{ tool_use_id: 'b', tool: 'Agent', input: {}, text: `Opened ${MR} for the styles.` }] },
@@ -173,7 +174,7 @@ test('an open PR is asked again once per refresh interval, and not at all while 
 
 test('a status another session fetched recently is used as is', async ($, on) => {
   const status = { title: 'Add search', state: 'open', review: 'approved', checks: null }
-  const clock = standIn(on, { [`status:${OPEN}`]: { status, fetchedAt: T0 - MINUTE } })
+  const clock = standIn(on, { isCompact: false, [`status:${OPEN}`]: { status, fetchedAt: T0 - MINUTE } })
   const history: SessionMessage[] = [
     { role: 'assistant', text: '', toolUses: [{ tool_use_id: 'a', tool: 'Bash', input: { command: 'gh pr create --fill' }, text: `${OPEN}\n` }] },
   ]
