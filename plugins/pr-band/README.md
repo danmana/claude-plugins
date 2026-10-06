@@ -4,22 +4,19 @@ A band above the Claude Code prompt that lists every pull/merge request the sess
 
 Claude Code's own footer shows one PR per session. `pr-band` shows all of them.
 
-<!-- Screenshots: compact view, hover, full view -->
+![pr-band in a Claude Code session: the footer shows one PR, the band shows all of them](docs/pr-band.gif)
 
 By default the band is one line, each number a link colored by its state:
 
-```
-PRs #12 !3 +1 merged/closed ▾ details
-```
+![Compact view of the band](docs/compact.png)
 
-Hover a number to see its repo, state, review, checks and title. Press `▾ details` for the full view:
+Hover a number to see its repo, state, review, checks and title; click it to open the PR:
 
-```
-PRs
-● app #12   open   review required   ✓4      Add search
-● web !3    draft                     …1 ✓2   Tidy styles
-+ 1 merged/closed   ▴ compact
-```
+![Compact view with a PR hovered](docs/compact-hover.png)
+
+Press `▾ details` for the full view, one row per PR with its state, review, checks and title. The footer below it still shows only `PR #4`:
+
+![Full view of the band](docs/details.png)
 
 ## Install
 
