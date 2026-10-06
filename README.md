@@ -10,13 +10,7 @@ Claude Code plugins by Dan Manastireanu.
 
 A band above the prompt listing every pull/merge request the session touched, with live state, review and checks. Claude Code's own footer shows one PR; this shows all of them.
 
-<!-- Screenshot: replace with an image of the band -->
-
-```
-● app #12   open   review required   ✓4      Add search
-● web !3    draft                     …1 ✓2   Tidy styles
-+ 1 merged/closed   ▴ compact
-```
+![pr-band in a Claude Code session: the footer shows one PR, the band shows all of them](plugins/pr-band/docs/pr-band.gif)
 
 **How it works.** Every Bash call the session runs, its subagents' included, is read for PR URLs and for `gh pr` / `glab mr` commands. Each PR gets a row with its state, review and checks, asked of `gh` or `glab` every few minutes while you work.
 
