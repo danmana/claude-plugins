@@ -91,6 +91,7 @@ test('PRs from Bash calls show with their status; merged ones fold away', async 
 
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await $.ui.mount({ ...BAND, surface } as never)
+    expect(await ui.find({ type: 'Text', text: 'PRs' })).toBeDefined()
     expect(await ui.find({ type: 'Link', text: 'app #12' })).toBeDefined()
     expect(await ui.find({ type: 'Text', text: 'review required' })).toBeDefined()
     expect(await ui.find({ type: 'Link', text: 'web !3' })).toBeDefined()
@@ -102,6 +103,7 @@ test('PRs from Bash calls show with their status; merged ones fold away', async 
     await ui.press({ key: 'toggle-closed' })
 
     await ui.press({ key: 'compact' })
+    expect(await ui.find({ type: 'Text', text: 'PRs' })).toBeDefined()
     expect(await ui.find({ type: 'Link', text: '#12' })).toBeDefined()
     expect(await ui.find({ type: 'Link', text: '!3' })).toBeDefined()
     expect(await ui.find({ type: 'Text', text: '+1 merged/closed' })).toBeDefined()
@@ -182,6 +184,7 @@ test('a status another session fetched recently is used as is', async ($, on) =>
   expect(asked).toEqual([])
 
   const ui = await $.ui.mount({ ...BAND, surface: 'terminal' } as never)
+  expect(await ui.find({ type: 'Text', text: 'PR' })).toBeDefined()
   expect(await ui.find({ type: 'Text', text: 'approved' })).toBeDefined()
   await ui.unmount()
 })

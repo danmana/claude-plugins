@@ -362,13 +362,17 @@ export const register: Register = (on, options) => {
     const shown = isShowingClosed ? [...open, ...closed] : open
     const { Box, Text, Link, Button } = $.ui.resolve(e)
     const scopeOf = (pr: Pr) => `pr-${pr.url}`.slice(-64)
+    const prefix = shown.length === 1 ? 'PR' : 'PRs'
 
     if (await read($, isCompact)) {
-      // A hovered PR's details are drawn over the rest of the row, right after the labels.
-      const labelsWidth = shown.reduce((width, pr) => width + prLabel(pr).length + 1, 0)
+      // A hovered PR's details are drawn over the rest of the row, right after the prefix and the labels.
+      const labelsWidth = shown.reduce((width, pr) => width + prLabel(pr).length + 1, prefix.length + 1)
       const detailWidth = Math.max(e.props.bodyColumns - labelsWidth, 0)
       return (
         <Box flexDirection="row" gap={1} width={e.props.bodyColumns}>
+          <Text key="prefix" dimColor>
+            {prefix}
+          </Text>
           {shown.map(pr => (
             <Box key={pr.url}>
               <Text color={colorOf(pr)} hover={{ scope: scopeOf(pr), bold: true, inverse: true }}>
@@ -401,6 +405,11 @@ export const register: Register = (on, options) => {
 
     return (
       <Box flexDirection="column" width={e.props.bodyColumns}>
+        {shown.length > 0 ? (
+          <Text key="prefix" dimColor>
+            {prefix}
+          </Text>
+        ) : null}
         {shown.map(pr => {
           const { status } = pr
           const isDim = isFinal(pr)
