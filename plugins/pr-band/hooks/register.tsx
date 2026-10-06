@@ -8,7 +8,7 @@ import { lookupCommand, normalize, parseLookup, parseStatus, readStatus, statusC
 
 const prs = atom({ plugin: 'pr-band', key: 'prs' } as const, [] as Pr[])
 const showClosed = atom({ plugin: 'pr-band', key: 'showClosed' } as const, false)
-const isCompact = atom({ plugin: 'pr-band', key: 'isCompact' } as const, false)
+const isCompact = atom({ plugin: 'pr-band', key: 'isCompact' } as const, true)
 
 // How often the timer looks for statuses gone stale; a PR is asked at most once per refresh interval.
 const TICK_MS = 60_000
@@ -284,7 +284,8 @@ export const register: Register = (on, options) => {
       description: 'PR band: refresh, toggle merged/closed PRs, toggle compact view, or clear the list',
       argumentHint: '[refresh | merged | compact | clear | why]',
     })
-    const storedCompact = Boolean(await $.store.get('isCompact'))
+    // Compact unless the person chose the full view.
+    const storedCompact = (await $.store.get('isCompact')) !== false
     await update($, isCompact, () => storedCompact)
     await update($, prs, list => normalize(list))
     await markActive($)
