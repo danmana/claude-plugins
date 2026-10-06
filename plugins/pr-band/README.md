@@ -107,5 +107,5 @@ Claude Code lays the API's types into `.claude-plugin/types/` when it loads the 
 ```
 claude plugin validate ./plugins/pr-band
 claude plugin test ./plugins/pr-band
-npx tsc -p ./plugins/pr-band
+npx -p typescript tsc -p ./plugins/pr-band
 ```
