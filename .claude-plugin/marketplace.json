@@ -1,0 +1,12 @@
+{
+  "name": "danmana",
+  "owner": { "name": "Dan Manastireanu" },
+  "metadata": { "description": "Claude Code plugins and mods by Dan Manastireanu" },
+  "plugins": [
+    {
+      "name": "pr-band",
+      "source": "./plugins/pr-band",
+      "description": "A band above the prompt listing every pull/merge request the session touched, with live state, checks and review"
+    }
+  ]
+}

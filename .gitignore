@@ -1,0 +1,5 @@
+# Laid by Claude Code beside each mod it loads from disk; it lists the loader's own MCP tools
+**/.claude-plugin/types/
+
+node_modules/
+.DS_Store
