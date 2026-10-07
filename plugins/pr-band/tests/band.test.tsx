@@ -40,6 +40,8 @@ function standIn(on: On, stored: Record<string, unknown> = {}) {
   on('session.id', () => ({ value: 'session-1' }))
   on('session.cwd', () => ({ value: '/work/app' }))
   on('agent.list', () => ({ value: [] }))
+  // The engine's own band beneath every mod: nothing of its own to draw.
+  on('ui.render', { component: 'AbovePrompt' }, () => ({ type: 'engine', ref: 0 }))
   return mock.clock(on, { now: T0 })
 }
 
@@ -220,4 +222,32 @@ test('the refresh interval is an install option', { options: { refreshMinutes: 1
   await bash($, clock, 'gh pr create --fill')
   await clock.advance(MINUTE)
   expect(asked.length).toBe(2)
+})
+
+test('what the mods after this one draw in the band still shows, in both views', async ($, on) => {
+  // A mod after this one, above the engine's own band.
+  on('ui.render', { component: 'AbovePrompt' }, ($, e) => {
+    const { Text } = $.ui.resolve(e)
+    return <Text>another mod</Text>
+  })
+  const clock = standIn(on)
+  const history: SessionMessage[] = [
+    { role: 'assistant', text: '', toolUses: [{ tool_use_id: 'a', tool: 'Bash', input: { command: 'gh pr create --fill' }, text: `${OPEN}\n` }] },
+  ]
+  github(on, () => '', history)
+
+  await start($)
+  await clock.advance(1)
+
+  for (const surface of ['terminal', 'desktop'] as const) {
+    const ui = await $.ui.mount({ ...BAND, surface } as never)
+    expect(await ui.find({ type: 'Link', text: '#12' })).toBeDefined()
+    expect(await ui.find({ type: 'Text', text: 'another mod' })).toBeDefined()
+
+    await ui.press({ key: 'expand' })
+    expect(await ui.find({ type: 'Link', text: 'app #12' })).toBeDefined()
+    expect(await ui.find({ type: 'Text', text: 'another mod' })).toBeDefined()
+    await ui.press({ key: 'compact' })
+    await ui.unmount()
+  }
 })

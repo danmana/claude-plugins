@@ -1,5 +1,5 @@
 import { atom, read, update } from 'claude-code'
-import type { EngineInterface, Register } from 'claude-code'
+import type { EngineInterface, Register, RenderElement } from 'claude-code'
 
 import type { Pr, PrRef, PrState, PrStatus } from '../types'
 import { findPrUrls, prLabel, prsInBashCall, repoName, uniqueRefs } from './detect'
@@ -364,12 +364,21 @@ export const register: Register = (on, options) => {
     const { Box, Text, Link, Button } = $.ui.resolve(e)
     const scopeOf = (pr: Pr) => `pr-${pr.url}`.slice(-64)
     const prefix = shown.length === 1 ? 'PR' : 'PRs'
+    // What the mods after this one draw in the band stays, under the PRs.
+    const others = await next(e)
+    // The engine refuses its own drawing under a Box with a width, so this one has none.
+    const withOthers = (band: RenderElement) => (
+      <Box flexDirection="column">
+        {band}
+        {others}
+      </Box>
+    )
 
     if (await read($, isCompact)) {
       // A hovered PR's details are drawn over the rest of the row, right after the prefix and the labels.
       const labelsWidth = shown.reduce((width, pr) => width + prLabel(pr).length + 1, prefix.length + 1)
       const detailWidth = Math.max(e.props.bodyColumns - labelsWidth, 0)
-      return (
+      return withOthers(
         <Box flexDirection="row" gap={1} width={e.props.bodyColumns}>
           <Text key="prefix" dimColor>
             {prefix}
@@ -400,11 +409,11 @@ export const register: Register = (on, options) => {
               </Text>
             </Box>
           ))}
-        </Box>
+        </Box>,
       )
     }
 
-    return (
+    return withOthers(
       <Box flexDirection="column" width={e.props.bodyColumns}>
         {shown.length > 0 ? (
           <Text key="prefix" dimColor>
@@ -446,7 +455,7 @@ export const register: Register = (on, options) => {
           <Button key="compact" plain dimColor label="▴ compact" onPress={() => pressed($, setCompact($, true))} />
           <Button key="refresh" plain dimColor label="↻ refresh" onPress={() => pressed($)} />
         </Box>
-      </Box>
+      </Box>,
     )
   })
 }
