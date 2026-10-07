@@ -47,6 +47,7 @@ While working on an installed copy: with the `danmana` marketplace added from th
 - **Background work never throws.** Every `void` promise ends in a catch (`capture`, `catchUp`, the timer) and every CLI call goes through `runCli`. An unhandled rejection is silent in a session and fails `plugin test`.
 - **Time comes from `$.clock`**, never `Date.now()`, so `mock.clock` controls it in tests.
 - **`ui.render` never writes state.** Write from a Button's `onPress` or another event. Boxes drawn `position: "absolute"` go last among their siblings, so they paint over the rest; the hover details showed through the row until they did.
+- **The band is shared.** The `AbovePrompt` hook puts `await next(e)` under its own tree, so the mods after pr-band still draw. The engine refuses its own drawing (`{ type: 'engine' }`) under a Box with a `width`, so the wrapper Box has none. In tests, `standIn()` answers `ui.render` for the band the way the engine does.
 - **Test harness:** stand-ins for a `$` call answer `{ value: … }` (`process.run`, `session.id`, `command.register`, `session.messages`), but an engine event answers its result directly (`session.start` → `{ cwd }`, `prompt.submit` → `{ text }`). A capture that runs after a call answers needs `clock.advance(1)` before asserting.
 
 ## Conventions

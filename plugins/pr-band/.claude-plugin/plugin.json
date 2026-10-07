@@ -1,6 +1,6 @@
 {
   "name": "pr-band",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A band above the prompt listing every pull/merge request the session touched, with live state, checks and review",
   "author": { "name": "Dan Manastireanu" },
   "license": "MIT",
